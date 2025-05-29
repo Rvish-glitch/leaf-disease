@@ -2,7 +2,7 @@ step:1 (for backend)
 =
 git clone https://github.com/Rvish-glitch/leaf-disease.git
 
-cd leaf-disease
+cd leaf-disease/backend
 
 pip install -r requirements.txt 
 
@@ -13,7 +13,7 @@ step:2 (for frontend)
 =
 open new tab in terminal(linux) or cmd(windows)
 
-cd frontend
+cd leaf-diease/frontend
 
 npm install
 
