@@ -1,4 +1,5 @@
-tensorflow
-numpy
-matplotlib
-pillow
+flask
+flask-cors 
+numpy pillow 
+tensorflow 
+scikit-learn
