@@ -1,0 +1,24 @@
+{
+  "predictions": [
+    {
+      "name": "Tomato___healthy",
+      "probability": 1.0
+    },
+    {
+      "name": "Tomato___Septoria_leaf_spot",
+      "probability": 0.0
+    },
+    {
+      "name": "Tomato___Tomato_mosaic_virus",
+      "probability": 0.0
+    },
+    {
+      "name": "Tomato___Target_Spot",
+      "probability": 0.0
+    },
+    {
+      "name": "Tomato___Early_blight",
+      "probability": 0.0
+    }
+  ]
+}
