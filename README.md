@@ -13,7 +13,7 @@ step:2 (for frontend)
 =
 open new tab in terminal(linux) or cmd(windows)
 
-cd leaf-diease/frontend
+cd leaf-disease/frontend
 
 npm install
 
