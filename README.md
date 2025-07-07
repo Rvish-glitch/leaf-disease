@@ -1,3 +1,7 @@
+Note
+=
+Python version should be <=3.10.
+
 Step 1 (for backend)
 =
 git clone https://github.com/Rvish-glitch/leaf-disease.git
