@@ -1,0 +1,24 @@
+{
+  "predictions": [
+    {
+      "name": "Apple___Apple_scab",
+      "probability": 0.9225
+    },
+    {
+      "name": "Strawberry___Leaf_scorch",
+      "probability": 0.0708
+    },
+    {
+      "name": "Apple___healthy",
+      "probability": 0.002
+    },
+    {
+      "name": "Apple___Cedar_apple_rust",
+      "probability": 0.002
+    },
+    {
+      "name": "Apple___Black_rot",
+      "probability": 0.0016
+    }
+  ]
+}
