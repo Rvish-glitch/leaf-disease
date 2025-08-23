@@ -66,7 +66,9 @@ function App() {
     >
       <div className="d-flex justify-content-center mb-4">
   <div className="bg-white p-3 rounded shadow-sm">
-    <h1 className="mb-0 text-success text-center">🌿 Plant's Leaf Disease Analyzer</h1>
+    <h1 className="mb-0 text-success text-center">
+      <span role="img" aria-label="plant leaf">🌿</span> Plant's Leaf Disease Analyzer
+    </h1>
   </div>
 </div>
 
