@@ -1,12 +1,9 @@
-# Python 3.10 compatible versions
-tensorflow==2.18.0
-keras==3.5.0
-numpy>=1.26.0,<2.1.0
-matplotlib==3.7.2
-pillow==10.0.0
+# Core dependencies - TensorFlow and Keras installed separately in build
 flask==2.3.3
 flask-cors==4.0.0
+gunicorn==21.2.0
+pillow==10.0.0
 opencv-python==4.8.1.78
+matplotlib==3.7.2
 efficientnet==1.1.1
 keras-applications==1.0.8
-gunicorn==21.2.0
