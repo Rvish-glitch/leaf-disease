@@ -2,9 +2,13 @@
 echo "🔍 Starting deployment script..."
 echo "📁 Current directory: $(pwd)"
 
+# Default to Hugging Face unless explicitly disabled
+USE_HUGGINGFACE=${USE_HUGGINGFACE:-true}
+
 # Check if we should use Hugging Face
 if [ "$USE_HUGGINGFACE" = "true" ]; then
-    echo "🤗 Using Hugging Face for model hosting - no local files required!"
+    echo "🤗 Primary: Using Hugging Face for model hosting"
+    echo "📝 Set USE_HUGGINGFACE=false to use local files instead"
 else
     echo "📁 Using local files - checking Git LFS..."
     

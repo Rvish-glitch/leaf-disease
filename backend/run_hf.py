@@ -68,7 +68,7 @@ class LeafDiseaseChecker:
         return {c: i for i, c in enumerate(classes)}
 
     def predict(self, img_path):
-        img = load_img(img_path, target_size=(224, 224))
+        img = load_img(img_path, target_size=(256, 256))  # Changed from 224 to 256
         img_array = img_to_array(img)
         img_array = np.expand_dims(img_array, axis=0)
         img_array = preprocess_input(img_array)
@@ -89,7 +89,7 @@ class LeafDiseaseChecker:
         }
 
     def predict_top_k(self, img_path, k=3):
-        img = load_img(img_path, target_size=(224, 224))
+        img = load_img(img_path, target_size=(256, 256))  # Changed from 224 to 256
         img_array = img_to_array(img)
         img_array = np.expand_dims(img_array, axis=0)
         img_array = preprocess_input(img_array)
