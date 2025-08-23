@@ -12,7 +12,7 @@ def upload_model_to_hf():
     # Get it from: https://huggingface.co/settings/tokens
     
     # Repository details
-    repo_id = "Rvish-glitch/leaf-disease-detection"  # Change to your username
+    repo_id = "rishabh914/leaf-disease-detection"  # Updated to your username
     
     api = HfApi()
     

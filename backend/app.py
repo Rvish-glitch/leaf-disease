@@ -6,8 +6,9 @@ import os
 try:
     from run_hf import LeafDiseaseChecker
     USE_HUGGINGFACE = True
-    print("🤗 Using Hugging Face version of LeafDiseaseChecker")
-except ImportError:
+    print("🤗 Hugging Face version available")
+except ImportError as e:
+    print(f"⚠️  Hugging Face version not available: {e}")
     from run import LeafDiseaseChecker
     USE_HUGGINGFACE = False
     print("📁 Using local version of LeafDiseaseChecker")
@@ -17,7 +18,8 @@ app = Flask(__name__)
 CORS(app)
 
 # Configuration for Hugging Face model
-HF_REPO_ID = os.environ.get('HF_REPO_ID', 'Rvish-glitch/leaf-disease-detection')
+HF_REPO_ID = os.environ.get('HF_REPO_ID', 'rishabh914/leaf-disease-detection')
+USE_HF = os.environ.get('USE_HUGGINGFACE', 'false').lower() == 'true'
 
 # Check if model file exists locally
 model_path = 'final_model.h5'
@@ -40,21 +42,27 @@ else:
     print(f"❌ Index file not found: {idx_path}")
 
 try:
-    if USE_HUGGINGFACE and not use_local:
-        # Try to use Hugging Face
+    if USE_HUGGINGFACE and USE_HF and not use_local:
+        # Try to use Hugging Face only if explicitly enabled
         print(f"🤗 Attempting to download model from Hugging Face: {HF_REPO_ID}")
         checker = LeafDiseaseChecker(
             use_huggingface=True,
             repo_id=HF_REPO_ID
         )
     else:
-        # Use local files
+        # Use local files (default behavior)
         print("📁 Using local model files")
-        checker = LeafDiseaseChecker(
-            model_path=model_path,
-            idx_path=idx_path,
-            use_huggingface=False if USE_HUGGINGFACE else None
-        )
+        if USE_HUGGINGFACE:
+            checker = LeafDiseaseChecker(
+                model_path=model_path,
+                idx_path=idx_path,
+                use_huggingface=False
+            )
+        else:
+            checker = LeafDiseaseChecker(
+                model_path=model_path,
+                idx_path=idx_path
+            )
     print("✅ LeafDiseaseChecker initialized successfully")
 except Exception as e:
     print(f"❌ Failed to initialize LeafDiseaseChecker: {e}")
