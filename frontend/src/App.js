@@ -9,6 +9,9 @@ import {
   ResponsiveContainer
 } from "recharts";
 
+// API Configuration
+const API_BASE_URL = "http://localhost:5000";
+
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -35,7 +38,7 @@ function App() {
     try {
       setLoading(true);
       setPredictions([]);
-      const response = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/predict`, {
+      const response = await fetch(`${API_BASE_URL}/predict`, {
         method: "POST",
         body: formData,
       });

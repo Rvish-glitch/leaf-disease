@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Row, Col, Button, Form, Image, Spinner } from "react-bootstrap";
 
+// API Configuration
+const API_BASE_URL = "http://localhost:5000";
+
 function UploadPage() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -22,7 +25,7 @@ function UploadPage() {
 
     try {
       setLoading(true);
-      await fetch("http://localhost:5000/predict", {
+      await fetch(`${API_BASE_URL}/predict`, {
         method: "POST",
         body: formData,
       });
