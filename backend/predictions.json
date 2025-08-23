@@ -1,0 +1,24 @@
+{
+  "predictions": [
+    {
+      "name": "Corn_(maize)___Common_rust_",
+      "probability": 1.0
+    },
+    {
+      "name": "Tomato___Late_blight",
+      "probability": 0.0
+    },
+    {
+      "name": "Peach___healthy",
+      "probability": 0.0
+    },
+    {
+      "name": "Apple___Cedar_apple_rust",
+      "probability": 0.0
+    },
+    {
+      "name": "Tomato___Bacterial_spot",
+      "probability": 0.0
+    }
+  ]
+}
