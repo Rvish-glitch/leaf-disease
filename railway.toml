@@ -1,9 +1,8 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "pip install --upgrade pip setuptools wheel && pip install --no-cache-dir -r requirements.txt"
 
 [deploy]
-startCommand = "gunicorn --bind 0.0.0.0:$PORT --timeout 120 --workers 1 app:app"
+startCommand = "gunicorn --bind 0.0.0.0:$PORT --timeout 120 --workers 1 --max-requests 10 --max-requests-jitter 5 app:app"
 healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"

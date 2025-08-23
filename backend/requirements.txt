@@ -1,9 +1,10 @@
-# Core dependencies - TensorFlow and Keras installed separately in build
+# Dependencies for Railway deployment
+tensorflow==2.18.0
+keras==3.5.0
 flask==2.3.3
 flask-cors==4.0.0
 gunicorn==21.2.0
 pillow==10.0.0
-opencv-python==4.8.1.78
-matplotlib==3.7.2
-efficientnet==1.1.1
-keras-applications==1.0.8
+numpy>=1.26.0
+matplotlib>=3.7.0
+opencv-python-headless==4.8.1.78
