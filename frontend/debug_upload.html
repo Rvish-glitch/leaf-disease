@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Leaf Disease Upload</title>
+</head>
+<body>
+    <h1>Debug Railway Upload</h1>
+    <form id="uploadForm">
+        <input type="file" id="fileInput" accept="image/*" required>
+        <button type="button" onclick="uploadImage()">Test Upload</button>
+    </form>
+    
+    <div id="result"></div>
+    <div id="debug"></div>
+
+    <script>
+        const RAILWAY_URL = 'https://leaf-disease-production.up.railway.app';
+        
+        function log(message) {
+            console.log(message);
+            document.getElementById('debug').innerHTML += '<p>' + message + '</p>';
+        }
+        
+        function uploadImage() {
+            log('🚀 Starting upload...');
+            
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                log('❌ No file selected');
+                return;
+            }
+            
+            log(`📁 File selected: ${file.name}, size: ${file.size} bytes`);
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            log('📤 Sending request to Railway...');
+            log(`🎯 URL: ${RAILWAY_URL}/predict`);
+            
+            fetch(`${RAILWAY_URL}/predict`, {
+                method: 'POST',
+                body: formData,
+                mode: 'cors'
+            })
+            .then(response => {
+                log(`📬 Response status: ${response.status}`);
+                log(`📬 Response ok: ${response.ok}`);
+                return response.json();
+            })
+            .then(data => {
+                log('✅ Success!');
+                log(`📊 Response: ${JSON.stringify(data, null, 2)}`);
+                document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            })
+            .catch(error => {
+                log(`❌ Error: ${error.message}`);
+                log(`❌ Full error: ${JSON.stringify(error, null, 2)}`);
+            });
+        }
+    </script>
+</body>
+</html>

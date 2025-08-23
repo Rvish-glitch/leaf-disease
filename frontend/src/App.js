@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Button, Form, Image, Spinner } from "react-bootstrap";
 import {
   BarChart,
@@ -10,13 +10,45 @@ import {
 } from "recharts";
 
 // API Configuration
-const API_BASE_URL = process.env.REACT_APP_API_URL || "https://leaf-disease-production.up.railway.app";
+import { API_BASE_URL, DEFAULT_API, logApiBase } from "./config";
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [predictions, setPredictions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [apiBase, setApiBase] = useState(API_BASE_URL);
+
+  // On mount, log API base and check backend health quickly
+  useEffect(() => {
+    logApiBase();
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    fetch(`${apiBase}/health`, { signal: controller.signal, mode: "cors" })
+      .then(r => {
+        if (!r.ok) throw new Error(`Health check failed: ${r.status}`);
+        return r.json();
+      })
+      .then(() => {
+        // Clear any stale error
+        setError("");
+      })
+      .catch((e) => {
+        // If user had pointed to localhost (common in dev) and it failed,
+        // fall back automatically to Railway default
+        const looksLocal = apiBase.includes("localhost") || apiBase.includes("127.0.0.1");
+        if (looksLocal) {
+          setApiBase(DEFAULT_API);
+          setError(`Can't reach backend at ${apiBase}. Falling back to ${DEFAULT_API}. ${e.message}`);
+        } else {
+          setError(`Can't reach backend at ${apiBase}. ${e.message}`);
+        }
+        // eslint-disable-next-line no-console
+        console.error("Health check error:", e);
+      })
+      .finally(() => clearTimeout(timeout));
+  }, [apiBase]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -27,37 +59,77 @@ function App() {
   };
 
   const handleUpload = async (e) => {
-    // Prevent default form submission behavior
     e.preventDefault();
     
-    if (!selectedFile) return;
+    console.log("🚀 HandleUpload called!");
+    console.log("📁 Selected file:", selectedFile);
+    console.log("🎯 API URL:", `${API_BASE_URL}/predict`);
+    
+    if (!selectedFile) {
+      console.log("❌ No file selected");
+      setError("Please select a file");
+      return;
+    }
     
     const formData = new FormData();
-    formData.append("image", selectedFile); 
+    formData.append("file", selectedFile); // Changed from "image" to "file"
+    console.log("📤 FormData created with file:", selectedFile.name);
     
     try {
       setLoading(true);
       setPredictions([]);
-      const response = await fetch(`${API_BASE_URL}/predict`, {
+      console.log("📡 Sending request to:", `${API_BASE_URL}/predict`);
+      
+  const response = await fetch(`${apiBase}/predict`, {
         method: "POST",
         body: formData,
+        mode: "cors",
       });
       
+      console.log("📬 Response status:", response.status);
+      console.log("📬 Response ok:", response.ok);
+      
       if (!response.ok) {
-        throw new Error("Failed to get prediction");
+        // Try to pull backend error message if present
+        let backendMsg = "";
+        try {
+          const maybeJson = await response.json();
+          backendMsg = maybeJson?.error || JSON.stringify(maybeJson);
+        } catch (_) {}
+        throw new Error(`Failed to get prediction: ${response.status} ${backendMsg}`);
       }
+      
       const data = await response.json();
-      setPredictions(data.predictions || []);
+      console.log("📊 Response data:", data);
+      
+      if (data.success && data.prediction) {
+        // Transform the prediction data for the chart
+        const predictionData = data.prediction;
+        const chartData = Object.entries(predictionData.all_predictions)
+          .sort(([,a], [,b]) => b - a) // Sort by confidence descending
+          .slice(0, 5) // Take top 5
+          .map(([name, probability]) => ({
+            name: name.replace(/___/g, ' - ').replace(/_/g, ' '), // Clean up class names
+            probability: probability
+          }));
+        
+        setPredictions(chartData);
+  setError("");
+        console.log("✅ Predictions set successfully");
+      } else {
+        throw new Error("Invalid response format");
+      }
     } catch (error) {
-      console.error("Prediction error:", error);
-      alert("Error getting predictions. Please try again.");
+      console.error("❌ Upload error:", error);
+  setError(error.message || "Unknown error during upload");
     } finally {
       setLoading(false);
+      console.log("🏁 Upload process completed");
     }
   };
 
   return (
-    <Container 
+  <Container 
       fluid 
       className="py-4 bg-light min-vh-100" 
       style={{
@@ -76,6 +148,12 @@ function App() {
 </div>
 
       <Row className="gx-4">
+        <div className="text-muted small mb-2">Using API: {apiBase}</div>
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        )}
         {/* Left column - Upload */}
         <Col md={3} className="bg-white p-4 rounded shadow-sm">
           <Form onSubmit={handleUpload}>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Frontend Issue</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; }
+        .error { background-color: #f8d7da; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Frontend Debug Tool</h1>
+    
+    <div class="test-section">
+        <h2>1. Test API Connection</h2>
+        <button onclick="testHealth()">Test Health Endpoint</button>
+        <div id="healthResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Test File Upload</h2>
+        <input type="file" id="fileInput" accept="image/*">
+        <button onclick="testFileUpload()">Test File Upload</button>
+        <div id="uploadResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Test Data Transformation</h2>
+        <button onclick="testDataTransform()">Test Data Transform</button>
+        <div id="transformResult"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = "https://leaf-disease-production.up.railway.app";
+
+        async function testHealth() {
+            const result = document.getElementById('healthResult');
+            try {
+                result.innerHTML = 'Testing...';
+                const response = await fetch(`${API_BASE_URL}/health`);
+                const data = await response.json();
+                
+                result.innerHTML = `
+                    <div class="success">
+                        <h4>✅ Health Check Success!</h4>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                result.innerHTML = `
+                    <div class="error">
+                        <h4>❌ Health Check Failed!</h4>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testFileUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const result = document.getElementById('uploadResult');
+            
+            if (!fileInput.files[0]) {
+                result.innerHTML = '<div class="error">Please select a file first!</div>';
+                return;
+            }
+
+            try {
+                result.innerHTML = 'Uploading...';
+                
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+
+                console.log('Sending request to:', `${API_BASE_URL}/predict`);
+                console.log('FormData file:', fileInput.files[0]);
+
+                const response = await fetch(`${API_BASE_URL}/predict`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response headers:', [...response.headers.entries()]);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Response data:', data);
+
+                if (data.success) {
+                    result.innerHTML = `
+                        <div class="success">
+                            <h4>✅ Upload Success!</h4>
+                            <p><strong>Predicted:</strong> ${data.prediction.predicted_class}</p>
+                            <p><strong>Confidence:</strong> ${(data.prediction.confidence * 100).toFixed(2)}%</p>
+                            <details>
+                                <summary>Full Response</summary>
+                                <pre>${JSON.stringify(data, null, 2)}</pre>
+                            </details>
+                        </div>
+                    `;
+                } else {
+                    result.innerHTML = `
+                        <div class="error">
+                            <h4>❌ Prediction Failed!</h4>
+                            <p>Error: ${data.error || 'Unknown error'}</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                result.innerHTML = `
+                    <div class="error">
+                        <h4>❌ Upload Failed!</h4>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function testDataTransform() {
+            const result = document.getElementById('transformResult');
+            
+            // Sample data like what Railway returns
+            const sampleData = {
+                "success": true,
+                "prediction": {
+                    "predicted_class": "Tomato___Septoria_leaf_spot",
+                    "confidence": 0.6608067750930786,
+                    "all_predictions": {
+                        "Apple___Apple_scab": 0.000789070560131222,
+                        "Tomato___Septoria_leaf_spot": 0.6608067750930786,
+                        "Tomato___Tomato_mosaic_virus": 0.0815642774105072,
+                        "Potato___healthy": 0.1486051082611084,
+                        "Grape___healthy": 0.022553371265530586
+                    }
+                }
+            };
+
+            try {
+                // Transform the prediction data for the chart (same as React code)
+                const predictions = sampleData.prediction;
+                const chartData = Object.entries(predictions.all_predictions)
+                    .sort(([,a], [,b]) => b - a) // Sort by confidence descending
+                    .slice(0, 5) // Take top 5
+                    .map(([name, probability]) => ({
+                        name: name.replace(/___/g, ' - ').replace(/_/g, ' '), // Clean up class names
+                        probability: probability
+                    }));
+
+                const topPrediction = {
+                    class: predictions.predicted_class.replace(/___/g, ' - ').replace(/_/g, ' '),
+                    confidence: predictions.confidence
+                };
+
+                result.innerHTML = `
+                    <div class="success">
+                        <h4>✅ Data Transform Success!</h4>
+                        <p><strong>Top Prediction:</strong> ${topPrediction.class} (${(topPrediction.confidence * 100).toFixed(2)}%)</p>
+                        <details>
+                            <summary>Chart Data</summary>
+                            <pre>${JSON.stringify(chartData, null, 2)}</pre>
+                        </details>
+                        <details>
+                            <summary>Original Data</summary>
+                            <pre>${JSON.stringify(sampleData, null, 2)}</pre>
+                        </details>
+                    </div>
+                `;
+            } catch (error) {
+                result.innerHTML = `
+                    <div class="error">
+                        <h4>❌ Data Transform Failed!</h4>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Auto-run health check on page load
+        window.onload = function() {
+            testHealth();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Frontend Railway Connection Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; }
+        .error { background-color: #f8d7da; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 3px; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; white-space: pre-wrap; }
+        .loading { background: #fff3cd; }
+    </style>
+</head>
+<body>
+    <h1>Frontend → Railway Connection Test</h1>
+    
+    <div class="test">
+        <h3>1. Test Basic Connectivity</h3>
+        <button onclick="testBasicConnection()">Test Health Endpoint</button>
+        <div id="basicResult"></div>
+    </div>
+
+    <div class="test">
+        <h3>2. Test CORS Headers</h3>
+        <button onclick="testCORS()">Test CORS</button>
+        <div id="corsResult"></div>
+    </div>
+
+    <div class="test">
+        <h3>3. Test File Upload (Simulated)</h3>
+        <input type="file" id="testFile" accept="image/*">
+        <button onclick="testFileUpload()">Test Upload</button>
+        <div id="uploadResult"></div>
+    </div>
+
+    <div class="test">
+        <h3>4. Network Error Analysis</h3>
+        <button onclick="analyzeNetworkErrors()">Analyze Network</button>
+        <div id="networkResult"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = "https://leaf-disease-production.up.railway.app";
+
+        async function testBasicConnection() {
+            const result = document.getElementById('basicResult');
+            result.innerHTML = '<div class="loading">Testing basic connection...</div>';
+            
+            try {
+                console.log('Testing connection to:', `${API_BASE_URL}/health`);
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+                
+                const response = await fetch(`${API_BASE_URL}/health`, {
+                    method: 'GET',
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', [...response.headers.entries()]);
+                
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                result.innerHTML = `
+                    <div class="success">
+                        <h4>✅ Connection Successful!</h4>
+                        <p><strong>Status:</strong> ${response.status}</p>
+                        <p><strong>Model Source:</strong> ${data.model_source}</p>
+                        <p><strong>HF Repo:</strong> ${data.hf_repo}</p>
+                        <details>
+                            <summary>Response Headers</summary>
+                            <pre>${JSON.stringify([...response.headers.entries()], null, 2)}</pre>
+                        </details>
+                        <details>
+                            <summary>Full Response</summary>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </details>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Connection error:', error);
+                result.innerHTML = `
+                    <div class="error">
+                        <h4>❌ Connection Failed!</h4>
+                        <p><strong>Error:</strong> ${error.name}</p>
+                        <p><strong>Message:</strong> ${error.message}</p>
+                        <p><strong>Type:</strong> ${error.constructor.name}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testCORS() {
+            const result = document.getElementById('corsResult');
+            result.innerHTML = '<div class="loading">Testing CORS...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/predict`, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': window.location.origin,
+                        'Access-Control-Request-Method': 'POST',
+                        'Access-Control-Request-Headers': 'Content-Type'
+                    }
+                });
+                
+                console.log('CORS preflight response:', response.status);
+                console.log('CORS headers:', [...response.headers.entries()]);
+                
+                const corsHeaders = {};
+                response.headers.forEach((value, key) => {
+                    if (key.toLowerCase().startsWith('access-control')) {
+                        corsHeaders[key] = value;
+                    }
+                });
+                
+                result.innerHTML = `
+                    <div class="success">
+                        <h4>✅ CORS Check Passed!</h4>
+                        <p><strong>Preflight Status:</strong> ${response.status}</p>
+                        <details>
+                            <summary>CORS Headers</summary>
+                            <pre>${JSON.stringify(corsHeaders, null, 2)}</pre>
+                        </details>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('CORS error:', error);
+                result.innerHTML = `
+                    <div class="error">
+                        <h4>❌ CORS Failed!</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testFileUpload() {
+            const fileInput = document.getElementById('testFile');
+            const result = document.getElementById('uploadResult');
+            
+            if (!fileInput.files[0]) {
+                result.innerHTML = '<div class="error">Please select a file first!</div>';
+                return;
+            }
+            
+            result.innerHTML = '<div class="loading">Testing file upload...</div>';
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                
+                console.log('Uploading file:', fileInput.files[0].name);
+                console.log('File size:', fileInput.files[0].size, 'bytes');
+                console.log('File type:', fileInput.files[0].type);
+                
+                const response = await fetch(`${API_BASE_URL}/predict`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                console.log('Upload response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('Upload response:', data);
+                
+                if (data.success) {
+                    result.innerHTML = `
+                        <div class="success">
+                            <h4>✅ Upload Successful!</h4>
+                            <p><strong>Predicted:</strong> ${data.prediction.predicted_class}</p>
+                            <p><strong>Confidence:</strong> ${(data.prediction.confidence * 100).toFixed(2)}%</p>
+                            <details>
+                                <summary>Full Response</summary>
+                                <pre>${JSON.stringify(data, null, 2)}</pre>
+                            </details>
+                        </div>
+                    `;
+                } else {
+                    result.innerHTML = `
+                        <div class="error">
+                            <h4>❌ Upload Failed!</h4>
+                            <p><strong>Error:</strong> ${data.error}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                result.innerHTML = `
+                    <div class="error">
+                        <h4>❌ Upload Error!</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function analyzeNetworkErrors() {
+            const result = document.getElementById('networkResult');
+            result.innerHTML = '<div class="loading">Analyzing network conditions...</div>';
+            
+            const tests = [];
+            
+            // Test 1: Check if Railway domain resolves
+            try {
+                await fetch(`${API_BASE_URL}/health`, { method: 'HEAD' });
+                tests.push('✅ Domain resolution: OK');
+            } catch (error) {
+                tests.push(`❌ Domain resolution: ${error.message}`);
+            }
+            
+            // Test 2: Check connection timeout
+            try {
+                const controller = new AbortController();
+                setTimeout(() => controller.abort(), 5000);
+                await fetch(`${API_BASE_URL}/health`, { signal: controller.signal });
+                tests.push('✅ Connection speed: OK (< 5s)');
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    tests.push('⚠️ Connection speed: Slow (> 5s)');
+                } else {
+                    tests.push(`❌ Connection speed: ${error.message}`);
+                }
+            }
+            
+            // Test 3: Check if running from localhost
+            const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            tests.push(`${isLocalhost ? '✅' : '⚠️'} Running from: ${window.location.origin}`);
+            
+            // Test 4: Check browser network conditions
+            if ('connection' in navigator) {
+                const conn = navigator.connection;
+                tests.push(`📶 Network: ${conn.effectiveType} (${conn.downlink} Mbps)`);
+            }
+            
+            result.innerHTML = `
+                <div class="success">
+                    <h4>🔍 Network Analysis</h4>
+                    ${tests.map(test => `<p>${test}</p>`).join('')}
+                </div>
+            `;
+        }
+
+        // Auto-run basic tests on page load
+        window.onload = function() {
+            testBasicConnection();
+        };
+    </script>
+</body>
+</html>

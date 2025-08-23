@@ -21,23 +21,60 @@ function UploadPage() {
     if (!selectedFile) return;
 
     const formData = new FormData();
-    formData.append("image", selectedFile);
+    formData.append("file", selectedFile);  // Changed from "image" to "file"
 
     try {
       setLoading(true);
-      await fetch(`${API_BASE_URL}/predict`, {
+      console.log("Sending request to:", `${API_BASE_URL}/predict`);
+      
+      const response = await fetch(`${API_BASE_URL}/predict`, {
         method: "POST",
         body: formData,
       });
 
-      await new Promise((res) => setTimeout(res, 1500)); // wait for file to be written
-      const res = await fetch("/predictions.json");
-      const data = await res.json();
+      console.log("Response status:", response.status);
+      console.log("Response headers:", [...response.headers.entries()]);
 
-      // navigate to result page with predictions and preview
-      navigate("/result", { state: { predictions: data.predictions, preview } });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Response data:", data);
+      
+      if (data.success) {
+        // Transform the prediction data for the chart
+        const predictions = data.prediction;
+        console.log("Predictions object:", predictions);
+        
+        const chartData = Object.entries(predictions.all_predictions)
+          .sort(([,a], [,b]) => b - a) // Sort by confidence descending
+          .slice(0, 5) // Take top 5
+          .map(([name, probability]) => ({
+            name: name.replace(/___/g, ' - ').replace(/_/g, ' '), // Clean up class names
+            probability: probability
+          }));
+        
+        console.log("Chart data:", chartData);
+        
+        // navigate to result page with predictions and preview
+        navigate("/result", { 
+          state: { 
+            predictions: chartData, 
+            preview,
+            topPrediction: {
+              class: predictions.predicted_class.replace(/___/g, ' - ').replace(/_/g, ' '),
+              confidence: predictions.confidence
+            }
+          } 
+        });
+      } else {
+        console.error("Prediction failed:", data.error);
+        alert("Prediction failed: " + (data.error || "Unknown error"));
+      }
     } catch (error) {
       console.error("Upload error:", error);
+      alert("Upload failed: " + error.message);
     } finally {
       setLoading(false);
     }
