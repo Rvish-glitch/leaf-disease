@@ -1,5 +1,11 @@
 [phases.setup]
-nixPkgs = ["git", "git-lfs", "bash"]
+nixPkgs = ["python310", "git", "git-lfs", "bash"]
+
+[phases.install]
+cmds = ["python3.10 -m venv --copies /opt/venv", ". /opt/venv/bin/activate && pip install -r requirements.txt"]
+
+[phases.build]
+cmds = ["chmod +x start.sh"]
 
 [start]
-cmd = "bash start.sh"
+cmd = "./start.sh"

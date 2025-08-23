@@ -38,8 +38,8 @@ else
     exit 1
 fi
 
-echo "🐍 Installing Python dependencies..."
-python -m pip install -r requirements.txt
+echo "🐍 Activating virtual environment and starting the application..."
+. /opt/venv/bin/activate
 
 echo "🚀 Starting the application..."
 gunicorn --bind 0.0.0.0:$PORT --timeout 120 --workers 1 app:app
