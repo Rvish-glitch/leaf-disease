@@ -17,68 +17,25 @@ app = Flask(__name__)
 # CORS configuration - allow all origins for now
 CORS(app)
 
-# Configuration for Hugging Face model (DEFAULT)
+# Configuration for Hugging Face model (ONLY)
 HF_REPO_ID = os.environ.get('HF_REPO_ID', 'rishabh914/leaf-disease-detection')
-USE_HF = os.environ.get('USE_HUGGINGFACE', 'true').lower() == 'true'  # Default to true
 
-# Local fallback paths
-local_model_path = 'final_model.h5'
-local_idx_path = 'class_indices.json'
-
-print(f"🤗 Primary: Hugging Face model at {HF_REPO_ID}")
-print(f"📁 Fallback: Local files in {os.getcwd()}")
-print(f"🔧 USE_HUGGINGFACE setting: {USE_HF}")
-
-# Check if local files exist (for fallback)
-local_model_exists = os.path.exists(local_model_path)
-local_idx_exists = os.path.exists(local_idx_path)
-
-if local_model_exists:
-    print(f"✅ Local model available: {local_model_path} (size: {os.path.getsize(local_model_path)} bytes)")
-if local_idx_exists:
-    print(f"✅ Local index available: {local_idx_path}")
+print(f"🤗 Using ONLY Hugging Face model: {HF_REPO_ID}")
+print(f"📁 Current directory: {os.getcwd()}")
+print("⚠️ Local files will be ignored")
 
 try:
-    if USE_HUGGINGFACE and USE_HF:
-        # Primary: Use Hugging Face model
-        print(f"🤗 Loading model from Hugging Face: {HF_REPO_ID}")
-        checker = LeafDiseaseChecker(
-            use_huggingface=True,
-            repo_id=HF_REPO_ID
-        )
-        print("✅ Hugging Face model loaded successfully")
-    else:
-        # Fallback: Use local files
-        print("📁 Loading local model files")
-        if USE_HUGGINGFACE:
-            checker = LeafDiseaseChecker(
-                model_path=local_model_path,
-                idx_path=local_idx_path,
-                use_huggingface=False
-            )
-        else:
-            checker = LeafDiseaseChecker(
-                model_path=local_model_path,
-                idx_path=local_idx_path
-            )
-        print("✅ Local model loaded successfully")
+    # Use ONLY Hugging Face model
+    print(f"🤗 Loading model from Hugging Face: {HF_REPO_ID}")
+    checker = LeafDiseaseChecker(
+        use_huggingface=True,
+        repo_id=HF_REPO_ID
+    )
+    print("✅ Hugging Face model loaded successfully")
 except Exception as e:
-    print(f"❌ Primary method failed: {e}")
-    if USE_HUGGINGFACE and USE_HF and (local_model_exists and local_idx_exists):
-        print("🔄 Attempting fallback to local files...")
-        try:
-            checker = LeafDiseaseChecker(
-                model_path=local_model_path,
-                idx_path=local_idx_path,
-                use_huggingface=False
-            )
-            print("✅ Fallback successful - using local files")
-        except Exception as fallback_error:
-            print(f"❌ Fallback also failed: {fallback_error}")
-            checker = None
-    else:
-        print("❌ No fallback available")
-        checker = Nonest, jsonify
+    print(f"❌ Failed to load Hugging Face model: {e}")
+    print("� Make sure you have internet connection and the repo ID is correct")
+    checker = Nonest, jsonify
 from flask_cors import CORS
 import os
 

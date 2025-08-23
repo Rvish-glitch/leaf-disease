@@ -2,47 +2,12 @@
 echo "🔍 Starting deployment script..."
 echo "📁 Current directory: $(pwd)"
 
-# Default to Hugging Face unless explicitly disabled
-USE_HUGGINGFACE=${USE_HUGGINGFACE:-true}
+echo "🤗 Using ONLY Hugging Face for model hosting"
+echo "📝 Local files will be ignored"
+echo "🌐 Model will be downloaded from: rishabh914/leaf-disease-detection"
 
-# Check if we should use Hugging Face
-if [ "$USE_HUGGINGFACE" = "true" ]; then
-    echo "🤗 Primary: Using Hugging Face for model hosting"
-    echo "📝 Set USE_HUGGINGFACE=false to use local files instead"
-else
-    echo "📁 Using local files - checking Git LFS..."
-    
-    # Set up Git LFS if files are not present
-    if [ ! -f "final_model.h5" ] || [ $(stat -c%s final_model.h5) -lt 1000000 ]; then
-        echo "🔧 Setting up Git and Git LFS..."
-        git config --global user.name "Railway Deploy" 
-        git config --global user.email "deploy@railway.app"
-        git lfs install --local
-        
-        echo "📥 Fetching LFS files..."
-        git lfs fetch --all
-        git lfs checkout
-        
-        echo "📊 Checking model file..."
-        if [ -f "final_model.h5" ]; then
-            filesize=$(stat -c%s final_model.h5)
-            echo "✅ Model file found: $(ls -lh final_model.h5)"
-            echo "📏 File size: $filesize bytes"
-            
-            if [ $filesize -lt 1000000 ]; then
-                echo "⚠️  Model file is too small - trying direct LFS pull..."
-                git lfs pull origin main
-                git lfs checkout final_model.h5
-            fi
-        else
-            echo "❌ Model file not found after LFS checkout!"
-            echo "📂 Current directory contents:"
-            ls -la
-        fi
-    else
-        echo "✅ Local model file already present and valid"
-    fi
-fi
+echo "� Current directory contents:"
+ls -la
 
 echo "📋 Current directory contents:"
 ls -la
