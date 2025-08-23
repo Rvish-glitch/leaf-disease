@@ -4,31 +4,26 @@
 
 ### GitHub Repository: https://github.com/Rvish-glitch/leaf-disease
 
-## Backend Deployment on Railway
+## Backend Deployment on Railway ✅ DEPLOYED
+
+### URL: https://leaf-disease-production.up.railway.app
 
 ### Files Ready:
 - ✅ `backend/requirements.txt` - All dependencies with specific versions
 - ✅ `backend/runtime.txt` - Python 3.10.12
 - ✅ `backend/Procfile` - Gunicorn configuration 
-- ✅ `backend/app.py` - Production-ready Flask app
+- ✅ `backend/app.py` - Production-ready Flask app with CORS
 - ✅ Model file handled with Git LFS
+- ✅ `backend/nixpacks.toml` - Git LFS support
 
-### Railway Setup:
-1. Go to [railway.app](https://railway.app)
-2. Create new project from GitHub repo: `Rvish-glitch/leaf-disease`
-3. Set root directory to: `backend`
-4. Railway will auto-detect Python and use your Procfile
-
-### Environment Variables (if needed):
-- `PORT` - Automatically set by Railway
-- `PYTHONPATH` - May need to set to `/app` if needed
-
-## Frontend Deployment on Vercel
+## Frontend Deployment on Vercel ✅ READY
 
 ### Files Ready:
 - ✅ `frontend/package.json` - React dependencies
 - ✅ `frontend/vercel.json` - Vercel configuration
-- ✅ `frontend/build/` - Production build files
+- ✅ `frontend/.env` - Production environment variables
+- ✅ `frontend/.env.local` - Development environment variables
+- ✅ API calls configured for production
 
 ### Vercel Setup:
 1. Go to [vercel.com](https://vercel.com)
@@ -36,9 +31,21 @@
 3. Set root directory to: `frontend`
 4. Build command: `npm run build`
 5. Output directory: `build`
+6. **Environment Variables will be auto-loaded from .env file**
 
-### Environment Variables for Frontend:
-- `REACT_APP_API_URL` - Set to your Railway backend URL
+## Environment Configuration:
+
+### Production (Vercel):
+- `REACT_APP_API_URL=https://leaf-disease-production.up.railway.app`
+
+### Development (Local):
+- `REACT_APP_API_URL=http://localhost:5000`
+
+## CORS Configuration:
+Backend allows requests from:
+- ✅ `http://localhost:3000` (local development)
+- ✅ `https://*.vercel.app` (Vercel deployments)
+- ✅ `https://vercel.app` (Vercel domain)
 
 ## Tech Stack:
 - **Backend**: Flask + TensorFlow 2.18.0 + Keras 3.5.0
@@ -46,11 +53,12 @@
 - **Model**: EfficientNetB3 (82MB via Git LFS)
 - **Deployment**: Railway (backend) + Vercel (frontend)
 
-## Next Steps:
-1. Deploy backend on Railway
-2. Get the Railway URL (e.g., `https://your-app.railway.app`)
-3. Deploy frontend on Vercel
-4. Set `REACT_APP_API_URL` in Vercel to your Railway URL
-5. Test the complete application!
+## URLs:
+- **Backend API**: https://leaf-disease-production.up.railway.app
+- **Frontend**: Deploy on Vercel to get URL
 
-Your code is production-ready! 🎉
+## Testing:
+- **Health Check**: GET https://leaf-disease-production.up.railway.app/
+- **Prediction**: POST https://leaf-disease-production.up.railway.app/predict
+
+Your production deployment is ready! 🎉

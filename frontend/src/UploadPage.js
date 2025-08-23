@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Container, Row, Col, Button, Form, Image, Spinner } from "react-bootstrap";
 
 // API Configuration
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = process.env.REACT_APP_API_URL || "https://leaf-disease-production.up.railway.app";
 
 function UploadPage() {
   const [selectedFile, setSelectedFile] = useState(null);
