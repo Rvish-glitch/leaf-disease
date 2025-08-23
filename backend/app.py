@@ -4,12 +4,8 @@ import os
 from run import LeafDiseaseChecker
 
 app = Flask(__name__)
-# CORS configuration for production and development
-CORS(app, origins=[
-    "http://localhost:3000",  # Local development
-    "https://*.vercel.app",   # Vercel deployments
-    "https://vercel.app",     # Vercel domain
-])
+# CORS configuration - allow all origins for now
+CORS(app)
 
 # Check if model file exists
 model_path = 'final_model.h5'
