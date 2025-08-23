@@ -1,0 +1,5 @@
+[phases.setup]
+nixPkgs = ["git", "git-lfs", "bash"]
+
+[start]
+cmd = "bash start.sh"
