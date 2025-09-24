@@ -1,5 +1,5 @@
-# Dockerfile for Railway deployment (root directory)
-# This builds the backend service from the backend/ folder
+# Dockerfile for Railway deployment
+# Build context is /backend directory due to rootDirectory setting
 
 FROM python:3.10-slim
 
@@ -20,13 +20,13 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better Docker layer caching
-COPY backend/requirements.txt .
+COPY requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend application code
-COPY backend/ .
+# Copy all application code (Railway build context is backend/ directory)
+COPY . .
 
 # Create uploads directory
 RUN mkdir -p uploads
