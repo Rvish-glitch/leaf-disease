@@ -1,0 +1,32 @@
+# Ignore frontend files for backend deployment
+frontend/
+node_modules/
+*.log
+.git/
+.github/
+README.md
+README_DOCKER.md
+TESTING_GUIDE.md
+DEPRECATED_FILES.md
+docker-compose*.yml
+deploy.sh
+test-deployment.sh
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
