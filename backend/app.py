@@ -3,19 +3,29 @@ from flask_cors import CORS
 import os
 
 # Try to import the Hugging Face version first, fall back to local version
+LeafDiseaseChecker = None
+USE_HUGGINGFACE = True
+
 try:
     from run_hf import LeafDiseaseChecker
-    USE_HUGGINGFACE = True
     print("Hugging Face version available")
 except ImportError as e:
     print(f"Hugging Face version not available: {e}")
-    from run import LeafDiseaseChecker
-    USE_HUGGINGFACE = False
-    print("Using local version of LeafDiseaseChecker")
+    try:
+        from run import LeafDiseaseChecker
+        USE_HUGGINGFACE = False
+        print("Using local version of LeafDiseaseChecker")
+    except ImportError as e2:
+        print(f"Both versions failed to import: {e2}")
+        print("Flask will start without model - check logs for import errors")
 
 app = Flask(__name__)
 # CORS configuration - allow all origins for now
 CORS(app)
+
+print("Flask app created successfully")
+print(f"Flask app name: {app.name}")
+print("CORS enabled")
 
 # Configuration for Hugging Face model (ONLY)
 HF_REPO_ID = os.environ.get('HF_REPO_ID', 'rishabh914/leaf-disease-detection')
@@ -30,11 +40,15 @@ model_loading = False
 model_error = None
 
 def load_model_async():
-    # Model loads in background thread
-    # Flask responds to health checks immediately
+    """Load model asynchronously to avoid blocking Flask startup"""
     global checker, model_loading, model_error
     
     if checker is not None or model_loading:
+        return
+    
+    if LeafDiseaseChecker is None:
+        model_error = "LeafDiseaseChecker class not available - import failed"
+        print(f"Cannot load model: {model_error}")
         return
         
     model_loading = True
@@ -91,9 +105,16 @@ def health_check():
 
 @app.route('/health')  # Railway checks this
 def health():
+    print("Health check endpoint called by Railway")
     # Always returns HTTP 200 ✅
     # Status: "loading" → "healthy" → "error"
     return health_check()
+
+# Add a simple test endpoint for debugging
+@app.route('/test')
+def test():
+    print("Test endpoint called")
+    return jsonify({'message': 'Flask is running', 'status': 'ok'})
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -176,3 +197,7 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     print(f"Starting Flask app on port {port}")
     app.run(host='0.0.0.0', port=port, debug=False)
+
+# This code runs when imported by Gunicorn
+print("Flask app module loaded successfully")
+print(f"App routes: {[rule.rule for rule in app.url_map.iter_rules()]}")
