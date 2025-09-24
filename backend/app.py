@@ -30,7 +30,8 @@ model_loading = False
 model_error = None
 
 def load_model_async():
-    """Load model asynchronously to avoid blocking Flask startup"""
+    # Model loads in background thread
+    # Flask responds to health checks immediately
     global checker, model_loading, model_error
     
     if checker is not None or model_loading:
@@ -88,8 +89,10 @@ def health_check():
         'version': '2.0'
     })
 
-@app.route('/health')
+@app.route('/health')  # Railway checks this
 def health():
+    # Always returns HTTP 200 ✅
+    # Status: "loading" → "healthy" → "error"
     return health_check()
 
 @app.route('/predict', methods=['POST'])
