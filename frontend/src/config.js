@@ -14,6 +14,6 @@ export const API_BASE_URL = getInitialApiBase();
 export function logApiBase() {
   if (typeof window !== "undefined") {
     // eslint-disable-next-line no-console
-    console.log("🌐 API_BASE_URL:", API_BASE_URL);
+  console.log("API_BASE_URL:", API_BASE_URL);
   }
 }

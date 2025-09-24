@@ -1,29 +1,29 @@
 # Deployment Guide
 
-## Your repository is ready for deployment! 🚀
+## Your repository is ready for deployment
 
 ### GitHub Repository: https://github.com/Rvish-glitch/leaf-disease
 
-## Backend Deployment on Railway ✅ DEPLOYED
+## Backend Deployment on Railway - DEPLOYED
 
 ### URL: https://leaf-disease-production.up.railway.app
 
 ### Files Ready:
-- ✅ `backend/requirements.txt` - All dependencies with specific versions
-- ✅ `backend/runtime.txt` - Python 3.10.12
-- ✅ `backend/Procfile` - Gunicorn configuration 
-- ✅ `backend/app.py` - Production-ready Flask app with CORS
-- ✅ Model file handled with Git LFS
-- ✅ `backend/nixpacks.toml` - Git LFS support
+- `backend/requirements.txt` - All dependencies with specific versions
+- `backend/runtime.txt` - Python 3.10.12
+- `backend/Procfile` - Gunicorn configuration 
+- `backend/app.py` - Production-ready Flask app with CORS
+- Model file handled with Git LFS
+- `backend/nixpacks.toml` - Git LFS support
 
-## Frontend Deployment on Vercel ✅ READY
+## Frontend Deployment on Vercel - READY
 
 ### Files Ready:
-- ✅ `frontend/package.json` - React dependencies
-- ✅ `frontend/vercel.json` - Vercel configuration
-- ✅ `frontend/.env` - Production environment variables
-- ✅ `frontend/.env.local` - Development environment variables
-- ✅ API calls configured for production
+- `frontend/package.json` - React dependencies
+- `frontend/vercel.json` - Vercel configuration
+- `frontend/.env` - Production environment variables
+- `frontend/.env.local` - Development environment variables
+- API calls configured for production
 
 ### Vercel Setup:
 1. Go to [vercel.com](https://vercel.com)
@@ -43,9 +43,9 @@
 
 ## CORS Configuration:
 Backend allows requests from:
-- ✅ `http://localhost:3000` (local development)
-- ✅ `https://*.vercel.app` (Vercel deployments)
-- ✅ `https://vercel.app` (Vercel domain)
+- `http://localhost:3000` (local development)
+- `https://*.vercel.app` (Vercel deployments)
+- `https://vercel.app` (Vercel domain)
 
 ## Tech Stack:
 - **Backend**: Flask + TensorFlow 2.18.0 + Keras 3.5.0
@@ -61,4 +61,4 @@ Backend allows requests from:
 - **Health Check**: GET https://leaf-disease-production.up.railway.app/
 - **Prediction**: POST https://leaf-disease-production.up.railway.app/predict
 
-Your production deployment is ready! 🎉
+Your production deployment is ready.

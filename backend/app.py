@@ -6,12 +6,12 @@ import os
 try:
     from run_hf import LeafDiseaseChecker
     USE_HUGGINGFACE = True
-    print("🤗 Hugging Face version available")
+    print("Hugging Face version available")
 except ImportError as e:
-    print(f"⚠️  Hugging Face version not available: {e}")
+    print(f"Hugging Face version not available: {e}")
     from run import LeafDiseaseChecker
     USE_HUGGINGFACE = False
-    print("📁 Using local version of LeafDiseaseChecker")
+    print("Using local version of LeafDiseaseChecker")
 
 app = Flask(__name__)
 # CORS configuration - allow all origins for now
@@ -20,21 +20,21 @@ CORS(app)
 # Configuration for Hugging Face model (ONLY)
 HF_REPO_ID = os.environ.get('HF_REPO_ID', 'rishabh914/leaf-disease-detection')
 
-print(f"🤗 Using ONLY Hugging Face model: {HF_REPO_ID}")
-print(f"📁 Current directory: {os.getcwd()}")
-print("⚠️ Local files will be ignored")
+print(f"Using ONLY Hugging Face model: {HF_REPO_ID}")
+print(f"Current directory: {os.getcwd()}")
+print("Local files will be ignored")
 
 try:
     # Use ONLY Hugging Face model
-    print(f"🤗 Loading model from Hugging Face: {HF_REPO_ID}")
+    print(f"Loading model from Hugging Face: {HF_REPO_ID}")
     checker = LeafDiseaseChecker(
         use_huggingface=True,
         repo_id=HF_REPO_ID
     )
-    print("✅ Hugging Face model loaded successfully")
+    print("Hugging Face model loaded successfully")
 except Exception as e:
-    print(f"❌ Failed to load Hugging Face model: {e}")
-    print("💡 Make sure you have internet connection and the repo ID is correct")
+    print(f"Failed to load Hugging Face model: {e}")
+    print("Make sure you have internet connection and the repo ID is correct")
     checker = None
 
 FRONTEND_JSON_PATH = 'predictions.json'
@@ -134,5 +134,5 @@ def get_predictions():
 if __name__ == '__main__':
     # Get port from environment variable or default to 5000
     port = int(os.environ.get('PORT', 5000))
-    print(f"🚀 Starting Flask app on port {port}")
+    print(f"Starting Flask app on port {port}")
     app.run(host='0.0.0.0', port=port, debug=False)

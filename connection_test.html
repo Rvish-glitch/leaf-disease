@@ -68,7 +68,7 @@
                 
                 result.innerHTML = `
                     <div class="success">
-                        <h4>✅ Connection Successful!</h4>
+                        <h4>Connection Successful</h4>
                         <p><strong>Status:</strong> ${response.status}</p>
                         <p><strong>Model Source:</strong> ${data.model_source}</p>
                         <p><strong>HF Repo:</strong> ${data.hf_repo}</p>
@@ -86,7 +86,7 @@
                 console.error('Connection error:', error);
                 result.innerHTML = `
                     <div class="error">
-                        <h4>❌ Connection Failed!</h4>
+                        <h4>Connection Failed</h4>
                         <p><strong>Error:</strong> ${error.name}</p>
                         <p><strong>Message:</strong> ${error.message}</p>
                         <p><strong>Type:</strong> ${error.constructor.name}</p>
@@ -121,7 +121,7 @@
                 
                 result.innerHTML = `
                     <div class="success">
-                        <h4>✅ CORS Check Passed!</h4>
+                        <h4>CORS Check Passed</h4>
                         <p><strong>Preflight Status:</strong> ${response.status}</p>
                         <details>
                             <summary>CORS Headers</summary>
@@ -133,7 +133,7 @@
                 console.error('CORS error:', error);
                 result.innerHTML = `
                     <div class="error">
-                        <h4>❌ CORS Failed!</h4>
+                        <h4>CORS Failed</h4>
                         <p><strong>Error:</strong> ${error.message}</p>
                     </div>
                 `;
@@ -176,7 +176,7 @@
                 if (data.success) {
                     result.innerHTML = `
                         <div class="success">
-                            <h4>✅ Upload Successful!</h4>
+                            <h4>Upload Successful</h4>
                             <p><strong>Predicted:</strong> ${data.prediction.predicted_class}</p>
                             <p><strong>Confidence:</strong> ${(data.prediction.confidence * 100).toFixed(2)}%</p>
                             <details>
@@ -188,7 +188,7 @@
                 } else {
                     result.innerHTML = `
                         <div class="error">
-                            <h4>❌ Upload Failed!</h4>
+                            <h4>Upload Failed</h4>
                             <p><strong>Error:</strong> ${data.error}</p>
                         </div>
                     `;
@@ -197,7 +197,7 @@
                 console.error('Upload error:', error);
                 result.innerHTML = `
                     <div class="error">
-                        <h4>❌ Upload Error!</h4>
+                        <h4>Upload Error</h4>
                         <p><strong>Error:</strong> ${error.message}</p>
                     </div>
                 `;
@@ -213,9 +213,9 @@
             // Test 1: Check if Railway domain resolves
             try {
                 await fetch(`${API_BASE_URL}/health`, { method: 'HEAD' });
-                tests.push('✅ Domain resolution: OK');
+                tests.push('Domain resolution: OK');
             } catch (error) {
-                tests.push(`❌ Domain resolution: ${error.message}`);
+                tests.push(`Domain resolution: ${error.message}`);
             }
             
             // Test 2: Check connection timeout
@@ -223,28 +223,28 @@
                 const controller = new AbortController();
                 setTimeout(() => controller.abort(), 5000);
                 await fetch(`${API_BASE_URL}/health`, { signal: controller.signal });
-                tests.push('✅ Connection speed: OK (< 5s)');
+                tests.push('Connection speed: OK (< 5s)');
             } catch (error) {
                 if (error.name === 'AbortError') {
-                    tests.push('⚠️ Connection speed: Slow (> 5s)');
+                    tests.push('Connection speed: Slow (> 5s)');
                 } else {
-                    tests.push(`❌ Connection speed: ${error.message}`);
+                    tests.push(`Connection speed: ${error.message}`);
                 }
             }
             
             // Test 3: Check if running from localhost
             const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-            tests.push(`${isLocalhost ? '✅' : '⚠️'} Running from: ${window.location.origin}`);
+            tests.push(`Running from: ${window.location.origin}`);
             
             // Test 4: Check browser network conditions
             if ('connection' in navigator) {
                 const conn = navigator.connection;
-                tests.push(`📶 Network: ${conn.effectiveType} (${conn.downlink} Mbps)`);
+                tests.push(`Network: ${conn.effectiveType} (${conn.downlink} Mbps)`);
             }
             
             result.innerHTML = `
                 <div class="success">
-                    <h4>🔍 Network Analysis</h4>
+                    <h4>Network Analysis</h4>
                     ${tests.map(test => `<p>${test}</p>`).join('')}
                 </div>
             `;

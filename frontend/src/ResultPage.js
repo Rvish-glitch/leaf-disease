@@ -26,7 +26,7 @@ function ResultPage() {
           <Image src={preview} fluid rounded />
           {topPrediction && (
             <div className="mt-3 p-3 bg-light rounded">
-              <h5 className="text-success mb-2">🎯 Top Prediction</h5>
+              <h5 className="text-success mb-2">Top Prediction</h5>
               <p className="mb-1"><strong>{topPrediction.class}</strong></p>
               <p className="mb-0 text-muted">Confidence: {(topPrediction.confidence * 100).toFixed(2)}%</p>
             </div>

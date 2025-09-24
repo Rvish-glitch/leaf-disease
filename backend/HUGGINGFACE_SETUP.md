@@ -39,9 +39,9 @@ If you don't want to upload your own model, you can use a public repository.
 Just set the HF_REPO_ID environment variable to point to any public model repository.
 
 ## Benefits of Using Hugging Face:
-- ✅ No Git LFS issues
-- ✅ Faster downloads
-- ✅ Better caching
-- ✅ No file size limits
-- ✅ Automatic CDN distribution
-- ✅ Version control for models
+- No Git LFS issues
+- Faster downloads
+- Better caching
+- No file size limits
+- Automatic CDN distribution
+- Version control for models

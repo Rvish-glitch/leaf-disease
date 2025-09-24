@@ -45,14 +45,14 @@
                 
                 result.innerHTML = `
                     <div class="success">
-                        <h4>✅ Health Check Success!</h4>
+                        <h4>Health Check Success</h4>
                         <pre>${JSON.stringify(data, null, 2)}</pre>
                     </div>
                 `;
             } catch (error) {
                 result.innerHTML = `
                     <div class="error">
-                        <h4>❌ Health Check Failed!</h4>
+                        <h4>Health Check Failed</h4>
                         <p>Error: ${error.message}</p>
                     </div>
                 `;
@@ -95,7 +95,7 @@
                 if (data.success) {
                     result.innerHTML = `
                         <div class="success">
-                            <h4>✅ Upload Success!</h4>
+                            <h4>Upload Success</h4>
                             <p><strong>Predicted:</strong> ${data.prediction.predicted_class}</p>
                             <p><strong>Confidence:</strong> ${(data.prediction.confidence * 100).toFixed(2)}%</p>
                             <details>
@@ -107,7 +107,7 @@
                 } else {
                     result.innerHTML = `
                         <div class="error">
-                            <h4>❌ Prediction Failed!</h4>
+                            <h4>Prediction Failed</h4>
                             <p>Error: ${data.error || 'Unknown error'}</p>
                             <pre>${JSON.stringify(data, null, 2)}</pre>
                         </div>
@@ -117,7 +117,7 @@
                 console.error('Upload error:', error);
                 result.innerHTML = `
                     <div class="error">
-                        <h4>❌ Upload Failed!</h4>
+                        <h4>Upload Failed</h4>
                         <p>Error: ${error.message}</p>
                     </div>
                 `;
@@ -161,7 +161,7 @@
 
                 result.innerHTML = `
                     <div class="success">
-                        <h4>✅ Data Transform Success!</h4>
+                        <h4>Data Transform Success</h4>
                         <p><strong>Top Prediction:</strong> ${topPrediction.class} (${(topPrediction.confidence * 100).toFixed(2)}%)</p>
                         <details>
                             <summary>Chart Data</summary>
@@ -176,7 +176,7 @@
             } catch (error) {
                 result.innerHTML = `
                     <div class="error">
-                        <h4>❌ Data Transform Failed!</h4>
+                        <h4>Data Transform Failed</h4>
                         <p>Error: ${error.message}</p>
                     </div>
                 `;

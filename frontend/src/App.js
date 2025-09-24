@@ -61,24 +61,24 @@ function App() {
   const handleUpload = async (e) => {
     e.preventDefault();
     
-    console.log("🚀 HandleUpload called!");
-    console.log("📁 Selected file:", selectedFile);
-    console.log("🎯 API URL:", `${API_BASE_URL}/predict`);
+  console.log("HandleUpload called");
+  console.log("Selected file:", selectedFile);
+  console.log("API URL:", `${API_BASE_URL}/predict`);
     
     if (!selectedFile) {
-      console.log("❌ No file selected");
+  console.log("No file selected");
       setError("Please select a file");
       return;
     }
     
     const formData = new FormData();
     formData.append("file", selectedFile); // Changed from "image" to "file"
-    console.log("📤 FormData created with file:", selectedFile.name);
+  console.log("FormData created with file:", selectedFile.name);
     
     try {
       setLoading(true);
       setPredictions([]);
-      console.log("📡 Sending request to:", `${API_BASE_URL}/predict`);
+  console.log("Sending request to:", `${API_BASE_URL}/predict`);
       
   const response = await fetch(`${apiBase}/predict`, {
         method: "POST",
@@ -86,8 +86,8 @@ function App() {
         mode: "cors",
       });
       
-      console.log("📬 Response status:", response.status);
-      console.log("📬 Response ok:", response.ok);
+  console.log("Response status:", response.status);
+  console.log("Response ok:", response.ok);
       
       if (!response.ok) {
         // Try to pull backend error message if present
@@ -100,7 +100,7 @@ function App() {
       }
       
       const data = await response.json();
-      console.log("📊 Response data:", data);
+  console.log("Response data:", data);
       
       if (data.success && data.prediction) {
         // Transform the prediction data for the chart
@@ -115,16 +115,16 @@ function App() {
         
         setPredictions(chartData);
   setError("");
-        console.log("✅ Predictions set successfully");
+  console.log("Predictions set successfully");
       } else {
         throw new Error("Invalid response format");
       }
     } catch (error) {
-      console.error("❌ Upload error:", error);
+  console.error("Upload error:", error);
   setError(error.message || "Unknown error during upload");
     } finally {
       setLoading(false);
-      console.log("🏁 Upload process completed");
+  console.log("Upload process completed");
     }
   };
 

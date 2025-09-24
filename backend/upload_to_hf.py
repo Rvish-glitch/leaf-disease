@@ -19,7 +19,7 @@ def upload_model_to_hf():
     try:
         # Create repository (will skip if already exists)
         create_repo(repo_id, exist_ok=True, repo_type="model")
-        print(f"✅ Repository {repo_id} created/verified")
+    print(f"Repository {repo_id} created/verified")
         
         # Upload the model file
         api.upload_file(
@@ -28,7 +28,7 @@ def upload_model_to_hf():
             repo_id=repo_id,
             commit_message="Upload leaf disease detection model"
         )
-        print("✅ Model file uploaded successfully")
+    print("Model file uploaded successfully")
         
         # Upload class indices
         api.upload_file(
@@ -37,7 +37,7 @@ def upload_model_to_hf():
             repo_id=repo_id,
             commit_message="Upload class indices"
         )
-        print("✅ Class indices uploaded successfully")
+    print("Class indices uploaded successfully")
         
         # Create a README for the model
         readme_content = """---
@@ -84,12 +84,12 @@ The model can detect various plant diseases across different crops including tom
             repo_id=repo_id,
             commit_message="Add model documentation"
         )
-        print("✅ README uploaded successfully")
+    print("README uploaded successfully")
         
-        print(f"\n🎉 Model successfully uploaded to: https://huggingface.co/{repo_id}")
+    print(f"\nModel successfully uploaded to: https://huggingface.co/{repo_id}")
         
     except Exception as e:
-        print(f"❌ Error uploading to Hugging Face: {e}")
+    print(f"Error uploading to Hugging Face: {e}")
         print("Make sure you have:")
         print("1. Installed huggingface_hub: pip install huggingface_hub")
         print("2. Logged in: huggingface-cli login")

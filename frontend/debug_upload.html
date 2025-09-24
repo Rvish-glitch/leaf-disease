@@ -22,23 +22,23 @@
         }
         
         function uploadImage() {
-            log('🚀 Starting upload...');
+            log('Starting upload...');
             
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
             
             if (!file) {
-                log('❌ No file selected');
+                log('No file selected');
                 return;
             }
             
-            log(`📁 File selected: ${file.name}, size: ${file.size} bytes`);
+            log(`File selected: ${file.name}, size: ${file.size} bytes`);
             
             const formData = new FormData();
             formData.append('file', file);
             
-            log('📤 Sending request to Railway...');
-            log(`🎯 URL: ${RAILWAY_URL}/predict`);
+            log('Sending request to Railway...');
+            log(`URL: ${RAILWAY_URL}/predict`);
             
             fetch(`${RAILWAY_URL}/predict`, {
                 method: 'POST',
@@ -46,18 +46,18 @@
                 mode: 'cors'
             })
             .then(response => {
-                log(`📬 Response status: ${response.status}`);
-                log(`📬 Response ok: ${response.ok}`);
+                log(`Response status: ${response.status}`);
+                log(`Response ok: ${response.ok}`);
                 return response.json();
             })
             .then(data => {
-                log('✅ Success!');
-                log(`📊 Response: ${JSON.stringify(data, null, 2)}`);
+                log('Success');
+                log(`Response: ${JSON.stringify(data, null, 2)}`);
                 document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
             })
             .catch(error => {
-                log(`❌ Error: ${error.message}`);
-                log(`❌ Full error: ${JSON.stringify(error, null, 2)}`);
+                log(`Error: ${error.message}`);
+                log(`Full error: ${JSON.stringify(error, null, 2)}`);
             });
         }
     </script>

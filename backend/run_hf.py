@@ -26,7 +26,7 @@ class LeafDiseaseChecker:
         
         if use_huggingface:
             # Download model and indices from Hugging Face
-            print("📥 Downloading model from Hugging Face...")
+            print("Downloading model from Hugging Face...")
             try:
                 model_path = hf_hub_download(
                     repo_id=repo_id,
@@ -38,10 +38,10 @@ class LeafDiseaseChecker:
                     filename="class_indices.json",
                     cache_dir=tempfile.gettempdir()
                 )
-                print("✅ Model and indices downloaded successfully!")
+                print("Model and indices downloaded successfully")
             except Exception as e:
-                print(f"❌ Failed to download from Hugging Face: {e}")
-                print("📝 Falling back to local files...")
+                print(f"Failed to download from Hugging Face: {e}")
+                print("Falling back to local files...")
                 # Fallback to local files
                 model_path = model_path or "final_model.h5"
                 idx_path = idx_path or "class_indices.json"
