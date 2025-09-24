@@ -34,12 +34,8 @@ RUN mkdir -p uploads
 # Make start script executable (if using it)
 RUN chmod +x start.sh
 
-# Expose port
-EXPOSE 5000
-
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
-ENV PORT=5000
 
-# Use Gunicorn for production
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--timeout", "120", "--workers", "1", "app:app"]
+# Use Gunicorn for production - Railway provides PORT env variable dynamically
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-5000} --timeout 300 --workers 1 app:app"]
