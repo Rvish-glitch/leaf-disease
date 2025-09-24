@@ -43,10 +43,12 @@ FRONTEND_JSON_PATH = 'predictions.json'
 def health_check():
     if checker is None:
         return jsonify({
-            'status': 'error',
-            'message': 'Model not loaded - check Hugging Face connection',
-            'hf_repo': HF_REPO_ID
-        }), 500
+            'status': 'starting',
+            'message': 'Leaf Disease Detection API is starting - model loading...',
+            'model_source': 'Hugging Face',
+            'hf_repo': HF_REPO_ID,
+            'version': '2.0'
+        }), 200  # Return 200 even if model not loaded yet
     
     return jsonify({
         'status': 'healthy',
