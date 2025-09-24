@@ -24,31 +24,61 @@ print(f"Using ONLY Hugging Face model: {HF_REPO_ID}")
 print(f"Current directory: {os.getcwd()}")
 print("Local files will be ignored")
 
-try:
-    # Use ONLY Hugging Face model
-    print(f"Loading model from Hugging Face: {HF_REPO_ID}")
-    checker = LeafDiseaseChecker(
-        use_huggingface=True,
-        repo_id=HF_REPO_ID
-    )
-    print("Hugging Face model loaded successfully")
-except Exception as e:
-    print(f"Failed to load Hugging Face model: {e}")
-    print("Make sure you have internet connection and the repo ID is correct")
-    checker = None
+# Initialize checker as None - will be loaded asynchronously
+checker = None
+model_loading = False
+model_error = None
+
+def load_model_async():
+    """Load model asynchronously to avoid blocking Flask startup"""
+    global checker, model_loading, model_error
+    
+    if checker is not None or model_loading:
+        return
+        
+    model_loading = True
+    try:
+        print(f"Loading model from Hugging Face: {HF_REPO_ID}")
+        checker = LeafDiseaseChecker(
+            use_huggingface=True,
+            repo_id=HF_REPO_ID
+        )
+        print("Hugging Face model loaded successfully")
+        model_error = None
+    except Exception as e:
+        print(f"Failed to load Hugging Face model: {e}")
+        print("Make sure you have internet connection and the repo ID is correct")
+        model_error = str(e)
+        checker = None
+    finally:
+        model_loading = False
 
 FRONTEND_JSON_PATH = 'predictions.json'
 
 @app.route('/')
 def health_check():
-    if checker is None:
+    # Start model loading if not already started
+    if checker is None and not model_loading:
+        import threading
+        threading.Thread(target=load_model_async, daemon=True).start()
+    
+    if model_loading:
         return jsonify({
-            'status': 'starting',
-            'message': 'Leaf Disease Detection API is starting - model loading...',
+            'status': 'loading',
+            'message': 'Leaf Disease Detection API is loading model...',
             'model_source': 'Hugging Face',
             'hf_repo': HF_REPO_ID,
             'version': '2.0'
-        }), 200  # Return 200 even if model not loaded yet
+        }), 200
+    
+    if checker is None:
+        return jsonify({
+            'status': 'error',
+            'message': f'Model loading failed: {model_error}',
+            'model_source': 'Hugging Face',
+            'hf_repo': HF_REPO_ID,
+            'version': '2.0'
+        }), 200  # Still return 200 for Railway health check
     
     return jsonify({
         'status': 'healthy',
@@ -64,9 +94,14 @@ def health():
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    if model_loading:
+        return jsonify({
+            'error': 'Model is still loading, please try again in a few moments'
+        }), 503
+        
     if checker is None:
         return jsonify({
-            'error': 'Model not loaded - check Hugging Face connection'
+            'error': f'Model not loaded - {model_error or "check Hugging Face connection"}'
         }), 500
     
     if 'file' not in request.files:
