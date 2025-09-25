@@ -127,13 +127,6 @@ GET /predictions
 - **Backend**: Flask development server on port 5000
 - **Hot Reloading**: Both services support live code changes
 
-### Production Environment
-- **Frontend**: Nginx serving optimized build on port 80
-- **Backend**: Gunicorn with production settings
-- **Health Checks**: Automated container health monitoring
-- **Resource Limits**: Memory and CPU constraints applied
-
-
 ## 📁 Project Structure
 
 ```
@@ -190,12 +183,5 @@ docker-compose exec frontend npm test
 ## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🙏 Acknowledgments
-
-- Model trained on PlantVillage dataset
-- TensorFlow and Keras for deep learning framework
-- Hugging Face for model hosting and distribution
-- React and Flask communities for excellent documentation
 
 
